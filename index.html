@@ -1,0 +1,356 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Age Calculator</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Geist:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600&display=swap');
+        
+        * {
+            font-feature-settings: "cv02", "cv03", "cv04", "cv11";
+        }
+        
+        body {
+            font-family: 'Geist', -apple-system, BlinkMacSystemFont, sans-serif;
+            letter-spacing: -0.01em;
+        }
+        
+        .golden-bg {
+            background: linear-gradient(135deg, #1a1a0f 0%, #2d2416 25%, #3d2f1a 50%, #2d2416 75%, #1a1a0f 100%);
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .golden-bg::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: 
+                radial-gradient(circle at 20% 80%, rgba(255, 215, 0, 0.15) 0%, transparent 50%),
+                radial-gradient(circle at 80% 20%, rgba(255, 223, 0, 0.1) 0%, transparent 50%),
+                radial-gradient(circle at 40% 40%, rgba(255, 193, 7, 0.08) 0%, transparent 50%),
+                radial-gradient(circle at 60% 70%, rgba(255, 215, 0, 0.12) 0%, transparent 40%);
+        }
+        
+        .sparkle {
+            position: absolute;
+            width: 4px;
+            height: 4px;
+            background: linear-gradient(45deg, #ffd700, #ffed4e);
+            border-radius: 50%;
+            animation: sparkle 3s infinite;
+        }
+        
+        .sparkle:nth-child(1) { top: 20%; left: 10%; animation-delay: 0s; }
+        .sparkle:nth-child(2) { top: 40%; left: 80%; animation-delay: 0.5s; }
+        .sparkle:nth-child(3) { top: 60%; left: 20%; animation-delay: 1s; }
+        .sparkle:nth-child(4) { top: 80%; left: 70%; animation-delay: 1.5s; }
+        .sparkle:nth-child(5) { top: 30%; left: 50%; animation-delay: 2s; }
+        .sparkle:nth-child(6) { top: 70%; left: 90%; animation-delay: 2.5s; }
+        .sparkle:nth-child(7) { top: 10%; left: 60%; animation-delay: 0.8s; }
+        .sparkle:nth-child(8) { top: 90%; left: 30%; animation-delay: 1.8s; }
+        
+        @keyframes sparkle {
+            0%, 100% { 
+                opacity: 0; 
+                transform: scale(0) rotate(0deg);
+            }
+            50% { 
+                opacity: 1; 
+                transform: scale(1) rotate(180deg);
+                box-shadow: 0 0 20px rgba(255, 215, 0, 0.8);
+            }
+        }
+        
+        .falling-element {
+            position: absolute;
+            font-size: 20px;
+            opacity: 0.6;
+            pointer-events: none;
+            animation: fall linear infinite;
+        }
+        
+        .falling-element:nth-child(1) { left: 5%; animation-duration: 8s; animation-delay: 0s; }
+        .falling-element:nth-child(2) { left: 15%; animation-duration: 12s; animation-delay: 2s; }
+        .falling-element:nth-child(3) { left: 25%; animation-duration: 10s; animation-delay: 4s; }
+        .falling-element:nth-child(4) { left: 35%; animation-duration: 14s; animation-delay: 1s; }
+        .falling-element:nth-child(5) { left: 45%; animation-duration: 9s; animation-delay: 3s; }
+        .falling-element:nth-child(6) { left: 55%; animation-duration: 11s; animation-delay: 5s; }
+        .falling-element:nth-child(7) { left: 65%; animation-duration: 13s; animation-delay: 0.5s; }
+        .falling-element:nth-child(8) { left: 75%; animation-duration: 15s; animation-delay: 2.5s; }
+        .falling-element:nth-child(9) { left: 85%; animation-duration: 7s; animation-delay: 4.5s; }
+        .falling-element:nth-child(10) { left: 95%; animation-duration: 16s; animation-delay: 1.5s; }
+        
+        @keyframes fall {
+            0% {
+                top: -50px;
+                transform: rotate(0deg);
+                opacity: 0;
+            }
+            10% {
+                opacity: 0.6;
+            }
+            90% {
+                opacity: 0.3;
+            }
+            100% {
+                top: 100vh;
+                transform: rotate(360deg);
+                opacity: 0;
+            }
+        }
+        
+        .premium-card {
+            background: rgba(255, 215, 0, 0.05);
+            backdrop-filter: blur(20px);
+            border: 1px solid rgba(255, 215, 0, 0.15);
+            box-shadow: 
+                0 8px 32px rgba(0, 0, 0, 0.4),
+                inset 0 1px 0 rgba(255, 215, 0, 0.2),
+                0 0 40px rgba(255, 215, 0, 0.1);
+        }
+        
+        .result-card {
+            background: linear-gradient(135deg, rgba(255, 215, 0, 0.12) 0%, rgba(255, 215, 0, 0.06) 100%);
+            border: 1px solid rgba(255, 215, 0, 0.2);
+            backdrop-filter: blur(10px);
+        }
+        
+        .input-modern {
+            background: rgba(255, 215, 0, 0.08);
+            border: 1px solid rgba(255, 215, 0, 0.2);
+            backdrop-filter: blur(10px);
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+        
+        .input-modern:focus {
+            background: rgba(255, 215, 0, 0.12);
+            border-color: rgba(255, 215, 0, 0.5);
+            box-shadow: 0 0 0 3px rgba(255, 215, 0, 0.1);
+            outline: none;
+        }
+        
+        .btn-primary {
+            background: linear-gradient(135deg, #ffd700 0%, #ffb300 100%);
+            border: 1px solid rgba(255, 215, 0, 0.3);
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            position: relative;
+            overflow: hidden;
+            color: #1a1a0f !important;
+        }
+        
+        .btn-primary::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.3), transparent);
+            transition: left 0.5s;
+        }
+        
+        .btn-primary:hover::before {
+            left: 100%;
+        }
+        
+        .btn-primary:hover {
+            background: linear-gradient(135deg, #ffed4e 0%, #ffc107 100%);
+            transform: translateY(-1px);
+            box-shadow: 0 8px 25px rgba(255, 215, 0, 0.4);
+        }
+        
+        .mono-font {
+            font-family: 'JetBrains Mono', 'SF Mono', Monaco, 'Cascadia Code', monospace;
+            font-feature-settings: "liga" 0;
+        }
+        
+        .text-gradient {
+            background: linear-gradient(135deg, #ffd700 0%, #ffed4e 50%, #ffc107 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+        
+        .number-display {
+            background: linear-gradient(135deg, #ffd700 0%, #ffed4e 50%, #ffc107 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+    </style>
+</head>
+<body class="golden-bg min-h-screen flex items-center justify-center p-4 relative">
+    <!-- Golden Sparkles -->
+    <div class="sparkle"></div>
+    <div class="sparkle"></div>
+    <div class="sparkle"></div>
+    <div class="sparkle"></div>
+    <div class="sparkle"></div>
+    <div class="sparkle"></div>
+    <div class="sparkle"></div>
+    <div class="sparkle"></div>
+    
+    <!-- Falling Time Elements -->
+    <div class="falling-element text-yellow-400">⏰</div>
+    <div class="falling-element text-yellow-300">📅</div>
+    <div class="falling-element text-yellow-500">⌛</div>
+    <div class="falling-element text-yellow-400">🕐</div>
+    <div class="falling-element text-yellow-300">📆</div>
+    <div class="falling-element text-yellow-500">⏳</div>
+    <div class="falling-element text-yellow-400">🕰️</div>
+    <div class="falling-element text-yellow-300">📊</div>
+    <div class="falling-element text-yellow-500">⌚</div>
+    <div class="falling-element text-yellow-400">🎂</div>
+    
+    <div class="premium-card rounded-2xl p-8 w-full max-w-lg shadow-2xl relative z-10">
+        <div class="text-center mb-10">
+            <div class="text-5xl mb-6">⏰</div>
+            <h1 class="text-4xl font-bold text-gradient mb-3 tracking-tight">Age Calculator</h1>
+            <p class="text-yellow-200 text-lg font-medium">Precision age calculation with modern accuracy</p>
+        </div>
+
+        <div class="space-y-6">
+            <div>
+                <label for="birthDate" class="block text-yellow-200 font-semibold mb-3 text-sm tracking-wide uppercase">
+                    Birth Date
+                </label>
+                <input 
+                    type="date" 
+                    id="birthDate" 
+                    class="w-full px-5 py-4 rounded-xl input-modern text-white placeholder-slate-400 font-medium text-lg"
+                    max=""
+                >
+            </div>
+
+            <button 
+                onclick="calculateAge()" 
+                class="w-full btn-primary text-white font-semibold py-4 px-6 rounded-xl relative overflow-hidden text-lg tracking-wide"
+            >
+                <span class="relative z-10">Calculate Age</span>
+            </button>
+
+            <div id="result" class="hidden">
+                <div class="result-card rounded-xl p-6 text-white shadow-lg">
+                    <h3 class="text-xl font-bold mb-6 text-center text-yellow-200 tracking-wide uppercase text-sm">Calculated Age</h3>
+                    <div class="grid grid-cols-3 gap-4 text-center mb-6">
+                        <div class="bg-white/10 rounded-lg p-4 border border-white/10">
+                            <div id="years" class="text-3xl font-bold number-display mono-font">0</div>
+                            <div class="text-xs text-yellow-300 font-semibold tracking-wider uppercase mt-2">Years</div>
+                        </div>
+                        <div class="bg-white/10 rounded-lg p-4 border border-white/10">
+                            <div id="months" class="text-3xl font-bold number-display mono-font">0</div>
+                            <div class="text-xs text-yellow-300 font-semibold tracking-wider uppercase mt-2">Months</div>
+                        </div>
+                        <div class="bg-white/10 rounded-lg p-4 border border-white/10">
+                            <div id="days" class="text-3xl font-bold number-display mono-font">0</div>
+                            <div class="text-xs text-yellow-300 font-semibold tracking-wider uppercase mt-2">Days</div>
+                        </div>
+                    </div>
+                    <div class="text-center bg-white/5 rounded-lg p-4 border border-white/10">
+                        <p class="text-sm text-yellow-300 font-medium mb-1">Total Days Lived</p>
+                        <p id="totalDays" class="text-2xl font-bold number-display mono-font">0</p>
+                    </div>
+                </div>
+            </div>
+
+            <div id="error" class="hidden bg-red-500/10 border border-red-500/20 rounded-xl p-4 text-red-200 text-center backdrop-blur-sm">
+                <span class="font-medium">Please select a valid birth date</span>
+            </div>
+        </div>
+
+        <div class="mt-8 text-center">
+            <p class="text-yellow-400 text-sm font-medium tracking-wide">
+                Precision • Accuracy • Excellence
+            </p>
+        </div>
+    </div>
+
+    <script>
+        // Set max date to today
+        document.getElementById('birthDate').max = new Date().toISOString().split('T')[0];
+
+        function calculateAge() {
+            const birthDateInput = document.getElementById('birthDate');
+            const resultDiv = document.getElementById('result');
+            const errorDiv = document.getElementById('error');
+            
+            // Hide previous results
+            resultDiv.classList.add('hidden');
+            errorDiv.classList.add('hidden');
+            
+            if (!birthDateInput.value) {
+                errorDiv.classList.remove('hidden');
+                return;
+            }
+            
+            const birthDate = new Date(birthDateInput.value);
+            const today = new Date();
+            
+            // Check if birth date is in the future
+            if (birthDate > today) {
+                errorDiv.classList.remove('hidden');
+                return;
+            }
+            
+            // Calculate age
+            let years = today.getFullYear() - birthDate.getFullYear();
+            let months = today.getMonth() - birthDate.getMonth();
+            let days = today.getDate() - birthDate.getDate();
+            
+            // Adjust for negative days
+            if (days < 0) {
+                months--;
+                const lastMonth = new Date(today.getFullYear(), today.getMonth(), 0);
+                days += lastMonth.getDate();
+            }
+            
+            // Adjust for negative months
+            if (months < 0) {
+                years--;
+                months += 12;
+            }
+            
+            // Calculate total days lived
+            const timeDiff = today.getTime() - birthDate.getTime();
+            const totalDays = Math.floor(timeDiff / (1000 * 3600 * 24));
+            
+            // Display results with animation
+            document.getElementById('years').textContent = years;
+            document.getElementById('months').textContent = months;
+            document.getElementById('days').textContent = days;
+            document.getElementById('totalDays').textContent = totalDays.toLocaleString() + ' days';
+            
+            resultDiv.classList.remove('hidden');
+            
+            // Add celebration effect for birthdays
+            if (today.getMonth() === birthDate.getMonth() && today.getDate() === birthDate.getDate()) {
+                showBirthdayMessage();
+            }
+        }
+        
+        function showBirthdayMessage() {
+            const celebration = document.createElement('div');
+            celebration.innerHTML = '🎉 Happy Birthday! 🎉';
+            celebration.className = 'fixed top-8 left-1/2 transform -translate-x-1/2 bg-gradient-to-r from-purple-500 to-pink-500 text-white px-8 py-4 rounded-xl font-bold shadow-2xl z-50 animate-bounce backdrop-blur-sm border border-white/20';
+            document.body.appendChild(celebration);
+            
+            setTimeout(() => {
+                celebration.remove();
+            }, 3000);
+        }
+        
+        // Allow Enter key to calculate
+        document.getElementById('birthDate').addEventListener('keypress', function(e) {
+            if (e.key === 'Enter') {
+                calculateAge();
+            }
+        });
+    </script>
+<script>(function(){function c(){var b=a.contentDocument||a.contentWindow.document;if(b){var d=b.createElement('script');d.innerHTML="window.__CF$cv$params={r:'9662def6939f180c',t:'MTc1MzY4OTkyMS4wMDAwMDA='};var a=document.createElement('script');a.nonce='';a.src='/cdn-cgi/challenge-platform/scripts/jsd/main.js';document.getElementsByTagName('head')[0].appendChild(a);";b.getElementsByTagName('head')[0].appendChild(d)}}if(document.body){var a=document.createElement('iframe');a.height=1;a.width=1;a.style.position='absolute';a.style.top=0;a.style.left=0;a.style.border='none';a.style.visibility='hidden';document.body.appendChild(a);if('loading'!==document.readyState)c();else if(window.addEventListener)document.addEventListener('DOMContentLoaded',c);else{var e=document.onreadystatechange||function(){};document.onreadystatechange=function(b){e(b);'loading'!==document.readyState&&(document.onreadystatechange=e,c())}}}})();</script></body>
+</html>
